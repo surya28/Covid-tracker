@@ -2,6 +2,7 @@ body {
   padding: 0;
   margin: 0;
   font-size: 62.5%;
+  background-color: #e5e5e5;
 }
 
 .cards {
@@ -16,10 +17,12 @@ body {
   flex: 0 1 24%;
   padding: 1rem;
   border-radius: 5px;
-  border: 1px solid #85dcb8;
   font-size: 1rem;
   color: #02aeaf;
   position: relative;
+  background: #ffffff;
+  box-shadow: 0px 2px 5px rgba(33, 33, 33, 0.1);
+  cursor: pointer;
 }
 
 .card h2 {
@@ -38,6 +41,38 @@ body {
   max-width: 10rem;
 }
 
-.header{
+.header {
   padding: 1rem 6rem;
+}
+
+.toolbar {
+  padding: 1rem 6rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.toolbar input[type="text"] {
+  padding: 0.6rem 1rem;
+  width: 15rem;
+}
+
+.toolbar input[type="date"] {
+  padding: 0.5rem 1rem;
+  width: 15rem;
+  cursor: pointer;
+}
+
+.sortbtn {
+  padding: 0.8rem 1rem;
+  margin: auto 1rem;
+  background: #ffffff;
+  color: #02aeaf;
+  border: 1px solid #02aeaf;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.ml-2{
+  margin-left: 2rem;
 }

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 const useApi = (url) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
+  const [error, setError] = useState(false);
 
   const fetchApi = () => {
     fetch(url)
@@ -10,9 +11,11 @@ const useApi = (url) => {
         return response.json();
       })
       .then((json) => {
-        console.log(json);
         setLoading(false);
         setData(json);
+      })
+      .catch((err) => {
+        setError(true);
       });
   };
 
@@ -21,7 +24,7 @@ const useApi = (url) => {
     //eslint-disable-next-line
   }, []);
 
-  return { loading, data };
+  return { loading, data, error };
 };
 
 export default useApi;
