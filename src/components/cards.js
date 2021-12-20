@@ -15,14 +15,15 @@ const StateCard = ({ state }) => {
   }, [state]);
 
   return (
-    <article
-      className="card"
-      onClick={() => {
-        history(`${state?.state}`);
-      }}
-    >
-      <header>
-        <h2>State - {state?.state}</h2>
+    <article className="card">
+      <div>
+        <h2
+          onClick={() => {
+            history(`${state?.state}`);
+          }}
+        >
+          State - {state?.state}
+        </h2>
         <span>
           <select className="select">
             <option value="all">Select a district</option>
@@ -36,10 +37,10 @@ const StateCard = ({ state }) => {
           </select>
         </span>
         <span></span>
-        <p>Confirmed - {state?.total?.confirmed}</p>
-        <p>Recovered - {state?.total?.recovered}</p>
-        <p>Deceased - {state?.total?.deceased}</p>
-      </header>
+        <p>Confirmed - {state?.total?.confirmed || "NA"}</p>
+        <p>Recovered - {state?.total?.recovered || "NA"}</p>
+        <p>Deceased - {state?.total?.deceased || "NA"}</p>
+      </div>
     </article>
   );
 };

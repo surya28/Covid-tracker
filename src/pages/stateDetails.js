@@ -6,7 +6,7 @@ const StateDetails = () => {
   const { state } = useParams();
   const [info, setInfo] = useState(null);
   const { loading, data, error } = useApi(
-    "https://data.covid19india.org/v4/min/data.min.json"
+    "https://data.covid19india.org/v4/min/timeseries.min.json"
   );
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const StateDetails = () => {
   if (loading) return <p>Loading</p>;
   if (error) return <p>Error</p>;
 
-  console.log(info);
+  console.log(data);
   return (
     <>
       <div className="header">
