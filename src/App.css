@@ -73,6 +73,28 @@ body {
   cursor: pointer;
 }
 
-.ml-2{
+.ml-2 {
   margin-left: 2rem;
+}
+
+.loader {
+  border: 0.5rem solid #f3f3f3;
+  border-top: 0.5rem solid #02aeaf;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-1rem, -1rem);
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

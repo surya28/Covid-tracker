@@ -62,8 +62,8 @@ const Home = () => {
     }
   }, [timeData]);
 
-  if (loading) return <p>Loading</p>;
-  if (error) return <p>Error</p>;
+  if (loading || timeLoading) return <div className="loader"></div>;
+  if (error || timeError) return <NoResult />;
 
   const handleOnChange = (e) => {
     let key,
@@ -157,7 +157,7 @@ const Home = () => {
     if (e.target.value) {
       let newInfo = [];
       timeInfo.forEach((info) => {
-        if(info[e.target.value] !== undefined){
+        if (info[e.target.value] !== undefined) {
           newInfo.push(info[e.target.value]);
         }
       });

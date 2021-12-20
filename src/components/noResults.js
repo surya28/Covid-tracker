@@ -5,6 +5,7 @@ const NoResult = () => {
   return (
     <img
       src={NoResults}
+      alt="no results found"
       style={{
         backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed",
