@@ -31,11 +31,12 @@ const StateCard = (props) => {
   useEffect(() => {
     let disctrictCopy = [],
       key;
-    for (key in state?.districts) {
+
+    for (key in props?.state?.districts) {
       disctrictCopy.push(key);
     }
     setDistricts(disctrictCopy); // eslint-disable-next-line
-  }, [props]);
+  }, [props?.state]);
 
   const handleDistrictChange = (e) => {
     if (e.target.value === "all") {
@@ -59,16 +60,18 @@ const StateCard = (props) => {
           State - {state?.state}
         </h2>
         <span>
-          <select className="select" onChange={handleDistrictChange}>
-            <option value="all">All</option>
-            {districts?.map((district) => {
-              return (
-                <option value={district} key={district}>
-                  {district}
-                </option>
-              );
-            })}
-          </select>
+          {districts && (
+            <select className="select" onChange={handleDistrictChange}>
+              <option value="all">All</option>
+              {districts?.map((district) => {
+                return (
+                  <option value={district} key={district}>
+                    {district}
+                  </option>
+                );
+              })}
+            </select>
+          )}
         </span>
         <span></span>
       </div>
@@ -77,27 +80,30 @@ const StateCard = (props) => {
           <div className="box-container" ref={ref}>
             <div className="box">
               {" "}
-              <p>Confirmed - {state?.total?.confirmed || "NA"}</p>
-              <p>Recovered - {state?.total?.recovered || "NA"}</p>
-              <p>Deceased - {state?.total?.deceased || "NA"}</p>
-              <p>1st dose done - {state?.total?.vaccinated1 || "NA"}</p>
-              <p>2 doses done - {state?.total?.vaccinated2 || "NA"}</p>
+              <p style={{ textAlign: "center", fontWeight: "bold" }}>Total</p>
+              <p>Confirmed - {state?.total?.confirmed || 0}</p>
+              <p>Recovered - {state?.total?.recovered || 0}</p>
+              <p>Deceased - {state?.total?.deceased || 0}</p>
+              <p>1st dose done - {state?.total?.vaccinated1 || 0}</p>
+              <p>2 doses done - {state?.total?.vaccinated2 || 0}</p>
             </div>
             <div className="box">
               {" "}
-              <p>Confirmed - {state?.delta?.confirmed || "NA"}</p>
-              <p>Recovered - {state?.delta?.recovered || "NA"}</p>
-              <p>Deceased - {state?.delta?.deceased || "NA"}</p>
-              <p>1st dose done - {state?.delta?.vaccinated1 || "NA"}</p>
-              <p>2 doses done - {state?.delta?.vaccinated2 || "NA"}</p>
+              <p style={{ textAlign: "center", fontWeight: "bold" }}>Delta</p>
+              <p>Confirmed - {state?.delta?.confirmed || 0}</p>
+              <p>Recovered - {state?.delta?.recovered || 0}</p>
+              <p>Deceased - {state?.delta?.deceased || 0}</p>
+              <p>1st dose done - {state?.delta?.vaccinated1 || 0}</p>
+              <p>2 doses done - {state?.delta?.vaccinated2 || 0}</p>
             </div>
             <div className="box">
               {" "}
-              <p>Confirmed - {state?.delta7?.confirmed || "NA"}</p>
-              <p>Recovered - {state?.delta7?.recovered || "NA"}</p>
-              <p>Deceased - {state?.delta7?.deceased || "NA"}</p>
-              <p>1st dose done - {state?.delta7?.vaccinated1 || "NA"}</p>
-              <p>2 doses done - {state?.delta7?.vaccinated2 || "NA"}</p>
+              <p style={{ textAlign: "center", fontWeight: "bold" }}>Delta7</p>
+              <p>Confirmed - {state?.delta7?.confirmed || 0}</p>
+              <p>Recovered - {state?.delta7?.recovered || 0}</p>
+              <p>Deceased - {state?.delta7?.deceased || 0}</p>
+              <p>1st dose done - {state?.delta7?.vaccinated1 || 0}</p>
+              <p>2 doses done - {state?.delta7?.vaccinated2 || 0}</p>
             </div>
           </div>
         </div>

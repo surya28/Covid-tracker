@@ -180,6 +180,7 @@ const Home = () => {
       setInfo(infoCopy);
     }
   };
+
   return (
     <>
       <div className="header">
