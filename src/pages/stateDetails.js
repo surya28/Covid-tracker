@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import useApi from "../api/useAPI";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSort, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import NoResult from "../components/noResults";
 
 const StateDetails = () => {
   const { state } = useParams();
@@ -17,58 +18,112 @@ const StateDetails = () => {
     "https://data.covid19india.org/v4/min/timeseries.min.json"
   );
 
+  const {
+    loading: dataLoading,
+    data: total,
+    error: dataError,
+  } = useApi("https://data.covid19india.org/v4/min/data.min.json");
+
   useEffect(() => {
-    if (data) {
-      let key,
-        dataCopy = JSON.parse(JSON.stringify(data));
-      for (key in dataCopy) {
-        if (key === state) {
-          setInfo(dataCopy[key]["dates"]);
+    if (data && total) {
+      let copy = data[state]["dates"];
+      const population = total[state]?.meta?.population;
+      Object?.keys(copy).forEach((item) => {
+        if (copy[item]?.total?.vaccinated2) {
+          copy[item] = {
+            ...copy[item],
+            vaccinatedPercentage:
+              (copy[item]?.total?.vaccinated2 / population) * 100,
+          };
+        } else {
+          copy[item] = { ...copy[item], vaccinatedPercentage: 0 };
         }
-      }
+        copy[item] = {
+          ...copy[item],
+          affectedPercentage: (copy[item]?.total?.confirmed / population) * 100,
+        };
+      });
+      setInfo(copy);
     }
-  }, [data, state]);
+  }, [data, total, state]);
 
   const sortByCount = () => {
-    let infoCopy = JSON.parse(JSON.stringify(info));
-    if (sortObject.confirmed === "asc") {
-      infoCopy = infoCopy.sort((state1, state2) => {
-        if (state1.total.confirmed < state2.total.confirmed) {
-          return 1;
-        } else {
-          return -1;
-        }
-      });
-      setSortObject({
-        ...sortObject,
-        confirmed: "desc",
-      });
-    } else if (sortObject.confirmed === "desc") {
-      infoCopy = infoCopy.sort((state1, state2) => {
-        if (state1.total.confirmed < state2.total.confirmed) {
-          return -1;
-        } else {
-          return 1;
-        }
-      });
-      setSortObject({
-        ...sortObject,
-        confirmed: "asc",
-      });
+    let copy = JSON.parse(JSON.stringify(info)),
+      sorted = {};
+    if (sortObject.confirmed === "desc") {
+      Object.keys(copy)
+        .sort(function (a, b) {
+          return copy[b]?.total?.confirmed - copy[a]?.total?.confirmed;
+        })
+        .forEach(function (key) {
+          sorted[key] = copy[key];
+        });
+      setSortObject({ ...sortObject, confirmed: "asc" });
+    } else {
+      Object.keys(copy)
+        .sort(function (a, b) {
+          return copy[a]?.total?.confirmed - copy[b]?.total?.confirmed;
+        })
+        .forEach(function (key) {
+          sorted[key] = copy[key];
+        });
+      setSortObject({ ...sortObject, confirmed: "desc" });
     }
-    setInfo(infoCopy);
+    setInfo(sorted);
   };
 
-  const sortByRecovered = () => {
-    console.log("clicked");
+  const sortByAffected = () => {
+    let copy = JSON.parse(JSON.stringify(info)),
+      sorted = {};
+    if (sortObject.affected === "desc") {
+      Object.keys(copy)
+        .sort(function (a, b) {
+          return copy[b]?.affectedPercentage - copy[a]?.affectedPercentage;
+        })
+        .forEach(function (key) {
+          sorted[key] = copy[key];
+        });
+      setSortObject({ ...sortObject, affected: "asc" });
+    } else {
+      Object.keys(copy)
+        .sort(function (a, b) {
+          return copy[a]?.affectedPercentage - copy[b]?.affectedPercentage;
+        })
+        .forEach(function (key) {
+          sorted[key] = copy[key];
+        });
+      setSortObject({ ...sortObject, affected: "desc" });
+    }
+    setInfo(sorted);
   };
 
-  const sortByDeceased = () => {
-    console.log("clicked");
+  const sortByVaccinated = () => {
+    let copy = JSON.parse(JSON.stringify(info)),
+      sorted = {};
+    if (sortObject.vaccinated === "desc") {
+      Object.keys(copy)
+        .sort(function (a, b) {
+          return copy[b]?.vaccinatedPercentage - copy[a]?.vaccinatedPercentage;
+        })
+        .forEach(function (key) {
+          sorted[key] = copy[key];
+        });
+      setSortObject({ ...sortObject, vaccinated: "asc" });
+    } else {
+      Object.keys(copy)
+        .sort(function (a, b) {
+          return copy[a]?.vaccinatedPercentage - copy[b]?.vaccinatedPercentage;
+        })
+        .forEach(function (key) {
+          sorted[key] = copy[key];
+        });
+      setSortObject({ ...sortObject, vaccinated: "desc" });
+    }
+    setInfo(sorted);
   };
 
-  if (loading) return <p>Loading</p>;
-  if (error) return <p>Error</p>;
+  if (loading || dataLoading) return <div className="loader"></div>;
+  if (error || dataError) return <NoResult />;
 
   const onDateChange = (e) => {
     let key,
@@ -85,6 +140,7 @@ const StateDetails = () => {
       setInfo(object);
     }
   };
+
   return (
     <>
       <div className="header">
@@ -119,14 +175,14 @@ const StateDetails = () => {
             </button>
           </span>
           <span>
-            <button className="sortbtn" onClick={sortByRecovered}>
-              Sort by Recovered count
+            <button className="sortbtn" onClick={sortByAffected}>
+              Sort by Affected percentage
               <FontAwesomeIcon icon={faSort} className="ml-2" />
             </button>
           </span>
           <span>
-            <button className="sortbtn" onClick={sortByDeceased}>
-              Sort by Deceased count
+            <button className="sortbtn" onClick={sortByVaccinated}>
+              Sort by Vaccinated percentage
               <FontAwesomeIcon icon={faSort} className="ml-2" />
             </button>
           </span>
@@ -135,42 +191,44 @@ const StateDetails = () => {
       <div>
         <table className="table">
           <thead>
-            <th>Date</th>
-            <th>Confirmed</th>
-            <th>Recovered</th>
-            <th>Deceased</th>
-            <th>Delta</th>
-            <th>Delta7</th>
+            <tr>
+              <th>Date</th>
+              <th>Confirmed</th>
+              <th>Recovered</th>
+              <th>Deceased</th>
+              <th>Delta</th>
+              <th>Delta7</th>
+            </tr>
           </thead>
           <tbody>
-            {Object?.keys(info)?.map((key) => {
-              return (
-                <tr>
-                  <td>{key}</td>
-                  <td>{info[key]?.total?.confirmed || "NA"}</td>
-                  <td>{info[key]?.total?.recovered || "NA"}</td>
-                  <td>{info[key]?.total?.deceased || "NA"}</td>
-                  <td>
-                    <p>{`Confirmed - ${
-                      info[key]?.delta?.confirmed || "NA"
-                    }`}</p>
-                    <p>{`Recovered - ${
-                      info[key]?.delta?.recovered || "NA"
-                    }`}</p>
-                    <p>{`Deceased - ${info[key]?.delta?.deceased || "NA"}`}</p>
-                  </td>
-                  <td>
-                    <p>{`Confirmed - ${
-                      info[key]?.delta7?.confirmed || "NA"
-                    }`}</p>
-                    <p>{`Recovered - ${
-                      info[key]?.delta7?.recovered || "NA"
-                    }`}</p>
-                    <p>{`Deceased - ${info[key]?.delta7?.deceased || "NA"}`}</p>
-                  </td>
-                </tr>
-              );
-            })}
+            {Object.keys(info)?.length > 0 ? (
+              Object?.keys(info)?.map((key) => {
+                return (
+                  <tr key={key}>
+                    <td>{key}</td>
+                    <td>{info[key]?.total?.confirmed || 0}</td>
+                    <td>{info[key]?.total?.recovered || 0}</td>
+                    <td>{info[key]?.total?.deceased || 0}</td>
+                    <td>
+                      <p>{`Confirmed - ${info[key]?.delta?.confirmed || 0}`}</p>
+                      <p>{`Recovered - ${info[key]?.delta?.recovered || 0}`}</p>
+                      <p>{`Deceased - ${info[key]?.delta?.deceased || 0}`}</p>
+                    </td>
+                    <td>
+                      <p>{`Confirmed - ${
+                        info[key]?.delta7?.confirmed || 0
+                      }`}</p>
+                      <p>{`Recovered - ${
+                        info[key]?.delta7?.recovered || 0
+                      }`}</p>
+                      <p>{`Deceased - ${info[key]?.delta7?.deceased || 0}`}</p>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <NoResult />
+            )}
           </tbody>
         </table>
       </div>
